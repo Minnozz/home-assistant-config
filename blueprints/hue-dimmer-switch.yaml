@@ -19,11 +19,13 @@ blueprint:
           entity:
             - domain: light
     action_1:
-      name: Action 1
-      description: "Action 1 to trigger when cycling with the on button"
+      name: Scene 1
+      description: "Scene 1 to set when cycling through scenes"
       default: []
       selector:
-        action:
+        target:
+          entity:
+            - domain: scene
 
 mode: single
 
@@ -72,7 +74,11 @@ action:
       - conditions:
           - condition: trigger
             id: on_pressed
-        sequence: !input action_1
+        sequence:
+          - service: scene.turn_on
+            target: !input action_1
+            data:
+              transition: 1
       - conditions:
           - condition: trigger
             id: up_tick
@@ -81,6 +87,7 @@ action:
             target: !input light
             data:
               brightness_step_pct: 10
+              transition: 1
       - conditions:
           - condition: trigger
             id: down_tick
@@ -89,12 +96,15 @@ action:
             target: !input light
             data:
               brightness_step_pct: -10
+              transition: 1
       - conditions:
           - condition: trigger
             id: off_pressed
         sequence:
           - service: light.turn_off
             target: !input light
+            data:
+              transition: 1
     default:
       - service: persistent_notification.create
         data:
