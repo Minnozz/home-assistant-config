@@ -98,7 +98,7 @@ action:
           - service: light.turn_on
             target: !input light
             data:
-              brightness_step_pct: {{ brightness_step_pct }}
+              brightness_step_pct: "{{ brightness_step_pct }}"
               transition: 1
       - conditions:
           - condition: trigger
@@ -107,7 +107,7 @@ action:
           - service: light.turn_on
             target: !input light
             data:
-              brightness_step_pct: {{ -1 * brightness_step_pct }}
+              brightness_step_pct: "{{ -1 * brightness_step_pct }}"
               transition: 1
       - conditions:
           - condition: trigger
