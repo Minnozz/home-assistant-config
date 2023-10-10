@@ -57,13 +57,13 @@ trigger:
   - device_id: !input dimmer_device
     domain: hue
     platform: device
-    type: short_press
+    type: initial_press
     subtype: 1
     id: on_pressed
   - device_id: !input dimmer_device
     domain: hue
     platform: device
-    type: short_press
+    type: short_release
     subtype: 2
     id: up_pressed
   - device_id: !input dimmer_device
@@ -75,7 +75,7 @@ trigger:
   - device_id: !input dimmer_device
     domain: hue
     platform: device
-    type: short_press
+    type: short_release
     subtype: 3
     id: down_pressed
   - device_id: !input dimmer_device
@@ -87,7 +87,7 @@ trigger:
   - device_id: !input dimmer_device
     domain: hue
     platform: device
-    type: short_press
+    type: initial_press
     subtype: 4
     id: off_pressed
 
