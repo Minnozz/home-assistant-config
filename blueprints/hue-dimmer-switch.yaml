@@ -1,7 +1,8 @@
 blueprint:
   name: Philips Hue Dimmer Switch
   description: |
-    
+    Use the Philips Hue Dimmer Switch as 3 scene buttons (short press on/up/down),
+    brightness control (hold up/down), and an off button (short press off).
   domain: automation
   source_url: https://github.com/Minnozz/home-assistant-config/blob/main/blueprints/hue-dimmer-switch.yaml
   input:
@@ -12,15 +13,29 @@ blueprint:
         device:
           integration: hue
     target_light:
-      name: Target Light(s)
-      description: "Target light(s) used for the off button and brightness control"
+      name: Target Lights
+      description: "Target lights used for the off button and brightness control"
       selector:
         target:
           entity:
             - domain: light
-    action_1:
-      name: Scene 1
-      description: "Scene 1 to set when cycling through scenes"
+    scene_on:
+      name: On Button
+      description: "Scene to set when pushing the On button"
+      selector:
+        target:
+          entity:
+            - domain: scene
+    scene_up:
+      name: Up Button
+      description: "Scene to set when pushing the Brightness Up button"
+      selector:
+        target:
+          entity:
+            - domain: scene
+    scene_down:
+      name: Down Button
+      description: "Scene to set when pushing the Brightness Down button"
       selector:
         target:
           entity:
@@ -42,15 +57,15 @@ trigger:
   - device_id: !input dimmer_device
     domain: hue
     platform: device
-    type: initial_press
+    type: short_press
     subtype: 1
     id: on_pressed
   - device_id: !input dimmer_device
     domain: hue
     platform: device
-    type: initial_press
+    type: short_press
     subtype: 2
-    id: up_tick
+    id: up_pressed
   - device_id: !input dimmer_device
     domain: hue
     platform: device
@@ -60,9 +75,9 @@ trigger:
   - device_id: !input dimmer_device
     domain: hue
     platform: device
-    type: initial_press
+    type: short_press
     subtype: 3
-    id: down_tick
+    id: down_pressed
   - device_id: !input dimmer_device
     domain: hue
     platform: device
@@ -72,7 +87,7 @@ trigger:
   - device_id: !input dimmer_device
     domain: hue
     platform: device
-    type: initial_press
+    type: short_press
     subtype: 4
     id: off_pressed
 
@@ -88,7 +103,23 @@ action:
             id: on_pressed
         sequence:
           - service: scene.turn_on
-            target: !input action_1
+            target: !input scene_on
+            data:
+              transition: 1
+      - conditions:
+          - condition: trigger
+            id: up_pressed
+        sequence:
+          - service: scene.turn_on
+            target: !input scene_up
+            data:
+              transition: 1
+      - conditions:
+          - condition: trigger
+            id: down_pressed
+        sequence:
+          - service: scene.turn_on
+            target: !input scene_down
             data:
               transition: 1
       - conditions:
