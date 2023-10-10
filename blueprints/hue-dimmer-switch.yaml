@@ -1,0 +1,104 @@
+blueprint:
+  name: Philips Hue Dimmer Switch
+  description: |
+    
+  domain: automation
+  source_url: https://github.com/Minnozz/home-assistant-config/blob/main/blueprints/hue-dimmer-switch.yaml
+  input:
+    dimmer_device:
+      name: Dimmer Switch Device
+      description: "The Hue Dimmer Switch to configure"
+      selector:
+        device:
+          integration: hue
+    light:
+      name: Light (group)
+      description: "Target used for the off button and brightness control"
+      selector:
+        target:
+          entity:
+            - domain: light
+    action_1:
+      name: Action 1
+      description: "Action 1 to trigger when cycling with the on button"
+      default: []
+      selector:
+        action:
+
+mode: single
+
+trigger:
+  - device_id: !input dimmer_device
+    domain: hue
+    platform: device
+    type: initial_press
+    subtype: 1
+    id: on_pressed
+  - device_id: !input dimmer_device
+    domain: hue
+    platform: device
+    type: initial_press
+    subtype: 2
+    id: up_tick
+  - device_id: !input dimmer_device
+    domain: hue
+    platform: device
+    type: repeat
+    subtype: 2
+    id: up_tick
+  - device_id: !input dimmer_device
+    domain: hue
+    platform: device
+    type: initial_press
+    subtype: 3
+    id: down_tick
+  - device_id: !input dimmer_device
+    domain: hue
+    platform: device
+    type: repeat
+    subtype: 3
+    id: down_tick
+  - device_id: !input dimmer_device
+    domain: hue
+    platform: device
+    type: initial_press
+    subtype: 4
+    id: off_pressed
+
+condition: []
+
+action:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: on_pressed
+        sequence: !input action_1
+      - conditions:
+          - condition: trigger
+            id: up_tick
+        sequence:
+          - service: light.turn_on
+            target: !input light
+            data:
+              brightness_step_pct: 10
+      - conditions:
+          - condition: trigger
+            id: down_tick
+        sequence:
+          - service: light.turn_on
+            target: !input light
+            data:
+              brightness_step_pct: -10
+      - conditions:
+          - condition: trigger
+            id: off_pressed
+        sequence:
+          - service: light.turn_off
+            target: !input light
+    default:
+      - service: persistent_notification.create
+        data:
+          message:
+            Hue Dimmer Switch ran default event from "choose" action on button press!
+          notification_id: hue_dimmer_switch_blueprint
+          title: Uncaught Dimmer Command
