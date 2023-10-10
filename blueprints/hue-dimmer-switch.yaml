@@ -26,6 +26,16 @@ blueprint:
         target:
           entity:
             - domain: scene
+    brightness_step_pct:
+      name: Brightness step size
+      description: "Percentage of brightness to change per tick (~ second)"
+      default: 20
+      selector:
+        number:
+          min: 0
+          max: 100
+          unit_of_measurement: "%"
+          mode: slider
 
 mode: single
 
@@ -70,6 +80,8 @@ trigger:
 condition: []
 
 action:
+  - variables:
+      brightness_step_pct: !input brightness_step_pct
   - choose:
       - conditions:
           - condition: trigger
@@ -86,7 +98,7 @@ action:
           - service: light.turn_on
             target: !input light
             data:
-              brightness_step_pct: 10
+              brightness_step_pct: {{ brightness_step_pct }}
               transition: 1
       - conditions:
           - condition: trigger
@@ -95,7 +107,7 @@ action:
           - service: light.turn_on
             target: !input light
             data:
-              brightness_step_pct: -10
+              brightness_step_pct: {{ -1 * brightness_step_pct }}
               transition: 1
       - conditions:
           - condition: trigger
