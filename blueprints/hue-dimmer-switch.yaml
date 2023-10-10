@@ -11,9 +11,9 @@ blueprint:
       selector:
         device:
           integration: hue
-    light:
-      name: Light (group)
-      description: "Target used for the off button and brightness control"
+    target:
+      name: Target
+      description: "Target (light, light group) used for the off button and brightness control"
       selector:
         target:
           entity:
@@ -21,7 +21,6 @@ blueprint:
     action_1:
       name: Scene 1
       description: "Scene 1 to set when cycling through scenes"
-      default: []
       selector:
         target:
           entity:
@@ -37,7 +36,7 @@ blueprint:
           unit_of_measurement: "%"
           mode: slider
 
-mode: single
+mode: parallel
 
 trigger:
   - device_id: !input dimmer_device
@@ -79,9 +78,10 @@ trigger:
 
 condition: []
 
+variables:
+  brightness_step_pct: !input brightness_step_pct
+
 action:
-  - variables:
-      brightness_step_pct: !input brightness_step_pct
   - choose:
       - conditions:
           - condition: trigger
