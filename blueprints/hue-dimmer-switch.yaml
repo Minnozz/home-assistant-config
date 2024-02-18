@@ -1,17 +1,28 @@
 blueprint:
   name: Philips Hue Dimmer Switch
   description: |
-    Use the Philips Hue Dimmer Switch as 3 scene buttons (short press on/up/down),
-    brightness control (hold up/down), and an off button (short press off).
+    Philips Hue Dimmer Switch:
+    - 3 scene buttons (short press on/up/down)
+    - brightness control (hold up/down)
+    - off button (short press off)
+    Supported platforms: hue/mqtt (zigbee2mqtt)
   domain: automation
   source_url: https://github.com/Minnozz/home-assistant-config/blob/main/blueprints/hue-dimmer-switch.yaml
   input:
     dimmer_device:
-      name: Dimmer Switch Device
-      description: "The Hue Dimmer Switch to configure"
+      name: Dimmer Switch Device (hue integration)
+      description: "The Hue Dimmer Switch to configure (only for hue integration)"
       selector:
         device:
           integration: hue
+    dimmer_action:
+      name: Dimmer Switch Action Sensor (mqtt integration)
+      description: "The action indicating the button press on the Hue Dimmer Switch to configure (only for mqtt integration)"
+      selector:
+        entity:
+          integration: mqtt
+          domain: sensor
+          multiple: false
     target_light:
       name: Target Lights
       description: "Target lights used for the off button and brightness control"
@@ -54,6 +65,7 @@ blueprint:
 mode: parallel
 
 trigger:
+  # hue
   - device_id: !input dimmer_device
     domain: hue
     platform: device
@@ -89,6 +101,32 @@ trigger:
     platform: device
     type: initial_press
     subtype: 4
+    id: off_pressed
+
+  # mqtt
+  - platform: state
+    entity_id: !input dimmer_action
+    to: "on_release"
+    id: on_pressed
+  - platform: state
+    entity_id: !input dimmer_action
+    to: "up_release"
+    id: up_pressed
+  - platform: state
+    entity_id: !input dimmer_action
+    to: "up_hold"
+    id: up_tick
+  - platform: state
+    entity_id: !input dimmer_action
+    to: "down_release"
+    id: down_pressed
+  - platform: state
+    entity_id: !input dimmer_action
+    to: "down_hold"
+    id: down_tick
+  - platform: state
+    entity_id: !input dimmer_action
+    to: "off_release"
     id: off_pressed
 
 condition: []
