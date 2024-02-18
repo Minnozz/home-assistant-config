@@ -12,12 +12,14 @@ blueprint:
     dimmer_device:
       name: Dimmer Switch Device (hue integration)
       description: "The Hue Dimmer Switch to configure (only for hue integration)"
+      default: {}
       selector:
         device:
           integration: hue
     dimmer_action:
       name: Dimmer Switch Action Sensor (mqtt integration)
       description: "The action indicating the button press on the Hue Dimmer Switch to configure (only for mqtt integration)"
+      default: {}
       selector:
         entity:
           integration: mqtt
