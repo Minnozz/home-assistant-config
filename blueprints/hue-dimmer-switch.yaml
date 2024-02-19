@@ -108,11 +108,11 @@ trigger:
   # mqtt
   - platform: state
     entity_id: !input dimmer_action
-    to: "on_release"
+    to: "on_press_release"
     id: on_pressed
   - platform: state
     entity_id: !input dimmer_action
-    to: "up_release"
+    to: "up_press_release"
     id: up_pressed
   - platform: state
     entity_id: !input dimmer_action
@@ -120,7 +120,7 @@ trigger:
     id: up_tick
   - platform: state
     entity_id: !input dimmer_action
-    to: "down_release"
+    to: "down_press_release"
     id: down_pressed
   - platform: state
     entity_id: !input dimmer_action
@@ -128,7 +128,7 @@ trigger:
     id: down_tick
   - platform: state
     entity_id: !input dimmer_action
-    to: "off_release"
+    to: "off_press_release"
     id: off_pressed
 
 condition: []
