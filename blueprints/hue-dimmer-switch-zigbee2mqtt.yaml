@@ -1,19 +1,21 @@
 blueprint:
-  name: Philips Hue Dimmer Switch (hue integration)
+  name: Philips Hue Dimmer Switch (zigbee2mqtt integration)
   description: |
     Philips Hue Dimmer Switch:
     - 3 scene buttons (short press on/up/down)
     - brightness control (hold up/down)
     - off button (short press off)
   domain: automation
-  source_url: https://github.com/Minnozz/home-assistant-config/blob/main/blueprints/hue-dimmer-switch.yaml
+  source_url: https://github.com/Minnozz/home-assistant-config/blob/main/blueprints/hue-dimmer-switch-zigbee2mqtt.yaml
   input:
-    dimmer_device:
-      name: Dimmer Switch Device
-      description: "The Hue Dimmer Switch to configure"
+    dimmer_action:
+      name: Dimmer Switch Action Sensor
+      description: "The action indicating the button press on the Hue Dimmer Switch to configure"
       selector:
-        device:
-          integration: hue
+        entity:
+          integration: mqtt
+          domain: sensor
+          multiple: false
     target_light:
       name: Target Lights
       description: "Target lights used for the off button and brightness control"
@@ -56,41 +58,29 @@ blueprint:
 mode: parallel
 
 trigger:
-  - device_id: !input dimmer_device
-    domain: hue
-    platform: device
-    type: initial_press
-    subtype: 1
+  - platform: state
+    entity_id: !input dimmer_action
+    to: "on_press_release"
     id: on_pressed
-  - device_id: !input dimmer_device
-    domain: hue
-    platform: device
-    type: short_release
-    subtype: 2
+  - platform: state
+    entity_id: !input dimmer_action
+    to: "up_press_release"
     id: up_pressed
-  - device_id: !input dimmer_device
-    domain: hue
-    platform: device
-    type: repeat
-    subtype: 2
+  - platform: state
+    entity_id: !input dimmer_action
+    to: "up_hold"
     id: up_tick
-  - device_id: !input dimmer_device
-    domain: hue
-    platform: device
-    type: short_release
-    subtype: 3
+  - platform: state
+    entity_id: !input dimmer_action
+    to: "down_press_release"
     id: down_pressed
-  - device_id: !input dimmer_device
-    domain: hue
-    platform: device
-    type: repeat
-    subtype: 3
+  - platform: state
+    entity_id: !input dimmer_action
+    to: "down_hold"
     id: down_tick
-  - device_id: !input dimmer_device
-    domain: hue
-    platform: device
-    type: initial_press
-    subtype: 4
+  - platform: state
+    entity_id: !input dimmer_action
+    to: "off_press_release"
     id: off_pressed
 
 condition: []
