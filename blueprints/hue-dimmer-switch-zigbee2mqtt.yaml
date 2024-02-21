@@ -15,7 +15,7 @@ blueprint:
         entity:
           integration: mqtt
           domain: sensor
-          multiple: false
+          multiple: true
     target_light:
       name: Target Lights
       description: "Target lights used for the off button and brightness control"
